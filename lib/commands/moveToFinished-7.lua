@@ -26,6 +26,10 @@
       ARGV[9]  base key
       ARGV[10] lock duration
       ARGV[11] token
+      ARGV[12] should update job error data (with args 13-15)
+      ARGV[13]  |- attemptsMade
+      ARGV[14]  |- stacktrace
+      ARGV[15]  |- failedReason
 
      Output:
       0 OK
@@ -38,6 +42,11 @@
 local rcall = redis.call
 
 if rcall("EXISTS", KEYS[3]) == 1 then -- // Make sure job exists
+  -- Update job data if desired.
+  if ARGV[12] == "1" then
+    rcall("HMSET", KEYS[3], "attemptsMade", ARGV[13], "stacktrace", ARGV[14], "failedReason", ARGV[15])
+  end
+
   if ARGV[5] ~= "0" then
     local lockKey = KEYS[3] .. ':lock'
     if rcall("GET", lockKey) == ARGV[5] then

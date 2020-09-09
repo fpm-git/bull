@@ -9,6 +9,10 @@
       ARGV[1]  pushCmd
       ARGV[2]  jobId
       ARGV[3]  token
+      ARGV[4]  should update job error data (with args 5-7)
+      ARGV[5]   |- attemptsMade
+      ARGV[6]   |- stacktrace
+      ARGV[7]   |- failedReason
 
     Events:
       'prefix:added'
@@ -19,6 +23,10 @@
      -2 - Job Not locked
 ]]
 if redis.call("EXISTS", KEYS[3]) == 1 then
+  -- Update job data if desired.
+  if ARGV[4] == "1" then
+    redis.call("HMSET", KEYS[3], "attemptsMade", ARGV[5], "stacktrace", ARGV[6], "failedReason", ARGV[7])
+  end
 
   -- Check for job lock
   if ARGV[3] ~= "0" then

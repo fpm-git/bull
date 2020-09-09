@@ -9,6 +9,10 @@
     ARGV[1] delayedTimestamp
     ARGV[2] the id of the job
     ARGV[3] queue token
+    ARGV[4] should update job error data (with args 5-7)
+    ARGV[5]  |- attemptsMade
+    ARGV[6]  |- stacktrace
+    ARGV[7]  |- failedReason
 
   Output:
     0 - OK
@@ -21,6 +25,10 @@
 local rcall = redis.call
 
 if rcall("EXISTS", KEYS[3]) == 1 then
+  -- Update job data if desired.
+  if ARGV[4] == "1" then
+    rcall("HMSET", KEYS[3], "attemptsMade", ARGV[5], "stacktrace", ARGV[6], "failedReason", ARGV[7])
+  end
 
   -- Check for job lock
   if ARGV[3] ~= "0" then
