@@ -19,11 +19,13 @@
       ARGV[2]  timestamp
       ARGV[3]  msg property
       ARGV[4]  return value / failed reason
-      ARGV[5]  token
+      ARGV[5]  token (conditional, set only when ignoreLock is falsy)
       ARGV[6]  shouldRemove
       ARGV[7]  event data (? maybe just send jobid).
       ARGV[8]  should fetch next job
       ARGV[9]  base key
+      ARGV[10] lock duration
+      ARGV[11] token
 
      Output:
       0 OK
